@@ -20,7 +20,7 @@ const SignupPage = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/signup', formData);
+      const res = await axios.post('${process.env.REACT_APP_API_URL}/api/auth/signup', formData);
       setMessage(res.data.msg + ' Redirecting to login...');
       // Redirect to login page after a short delay
       setTimeout(() => {

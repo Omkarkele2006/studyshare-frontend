@@ -52,7 +52,7 @@ const AdminPage = () => {
         },
       };
 
-      await axios.post('http://localhost:5000/api/notes/upload', uploadData, config);
+      await axios.post('${process.env.REACT_APP_API_URL}/api/notes/upload', uploadData, config);
       
       setMessage('File uploaded successfully!');
       setFormData({ title: '', subject: '', year: '' });

@@ -19,7 +19,7 @@ const DashboardPage = () => {
       try {
         const token = localStorage.getItem('token');
         const config = { headers: { 'x-auth-token': token } };
-        const res = await axios.get('http://localhost:5000/api/notes', config);
+        const res = await axios.get('${process.env.REACT_APP_API_URL}/api/notes', config);
         setNotes(res.data);
       } catch (err) {
         console.error('Error fetching notes:', err);
@@ -43,7 +43,7 @@ const DashboardPage = () => {
         headers: { 'x-auth-token': token },
         responseType: 'blob',
       };
-      const res = await axios.get(`http://localhost:5000/api/notes/download/${noteId}`, config);
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/notes/download/${noteId}`, config);
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement('a');
       link.href = url;
