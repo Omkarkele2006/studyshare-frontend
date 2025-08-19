@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import API from '../api/axios'; // Make sure we use our central API client
 
 // A simple SVG icon for the download button
