@@ -24,8 +24,6 @@ const LoginPage = () => {
     setError('');
 
     try {
-      // --- THIS IS THE FIX ---
-      // Using the live backend URL directly
       const API_URL = 'https://studyshare-backend-xo81.onrender.com/api/auth/login';
       const res = await axios.post(API_URL, formData);
       
@@ -52,7 +50,6 @@ const LoginPage = () => {
     }
   };
 
-  // The rest of your styled return() function is the same
   return (
     <div className="min-h-screen bg-slate-100 font-sans flex flex-col justify-center items-center p-4">
       <div className="w-full max-w-md">
@@ -72,7 +69,16 @@ const LoginPage = () => {
               <label htmlFor="password" className="block text-sm font-medium text-gray-600">Password</label>
               <input id="password" type="password" name="password" value={password} onChange={onChange} required className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
             </div>
+            <div className="flex items-center justify-end">
+              <div className="text-sm">
+                <Link to="/forgot-password" className="font-semibold text-blue-600 hover:text-blue-500">
+                  Forgot password?
+                </Link>
+              </div>
+            </div>
+            
             {error && <p className="text-sm text-center text-red-600">{error}</p>}
+
             <div>
               <button type="submit" disabled={isLoading} className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:bg-blue-300">
                 {isLoading ? 'Logging in...' : 'Login'}
