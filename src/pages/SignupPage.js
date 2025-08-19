@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-// import axios from 'axios'; // We no longer need the default axios
-import API from '../api/axios'; // <-- 1. Import our new API client
+import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 
 const SignupPage = () => {
@@ -21,8 +20,10 @@ const SignupPage = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     try {
-      // --- 2. Use the simplified API call ---
-      const res = await API.post('/api/auth/signup', formData);
+      // --- THIS IS THE FIX ---
+      // Using the live backend URL directly
+      const API_URL = 'https://studyshare-backend-xo81.onrender.com/api/auth/signup';
+      const res = await axios.post(API_URL, formData);
       
       setMessage(res.data.msg + ' Redirecting to login...');
       setTimeout(() => {
@@ -35,7 +36,7 @@ const SignupPage = () => {
     }
   };
 
-  // ... the rest of your styled return() function remains the same
+  // The rest of your styled return() function is the same
   return (
     <div className="min-h-screen bg-slate-100 font-sans flex flex-col justify-center items-center p-4">
       <div className="w-full max-w-md">

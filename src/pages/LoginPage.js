@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-// import axios from 'axios'; // We no longer need the default axios
-import API from '../api/axios'; // <-- 1. Import our new API client
+import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 
@@ -25,8 +24,10 @@ const LoginPage = () => {
     setError('');
 
     try {
-      // --- 2. Use the simplified API call ---
-      const res = await API.post('/api/auth/login', formData);
+      // --- THIS IS THE FIX ---
+      // Using the live backend URL directly
+      const API_URL = 'https://studyshare-backend-xo81.onrender.com/api/auth/login';
+      const res = await axios.post(API_URL, formData);
       
       const token = res.data.token;
       localStorage.setItem('token', token);
@@ -51,7 +52,7 @@ const LoginPage = () => {
     }
   };
 
-  // ... the rest of your styled return() function remains the same
+  // The rest of your styled return() function is the same
   return (
     <div className="min-h-screen bg-slate-100 font-sans flex flex-col justify-center items-center p-4">
       <div className="w-full max-w-md">
