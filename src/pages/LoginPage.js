@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
+import toast from 'react-hot-toast'; // <-- 1. Import toast
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -9,7 +10,7 @@ const LoginPage = () => {
     password: '',
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  // We no longer need the 'error' state, as toast will handle it.
   const navigate = useNavigate();
 
   const { email, password } = formData;
@@ -21,7 +22,6 @@ const LoginPage = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
 
     try {
       const API_URL = 'https://studyshare-backend-xo81.onrender.com/api/auth/login';
@@ -29,6 +29,9 @@ const LoginPage = () => {
       
       const token = res.data.token;
       localStorage.setItem('token', token);
+      
+      toast.success('Login successful!'); // <-- 2. Show success toast
+
       const decodedToken = jwtDecode(token);
       const userRole = decodedToken.user.role;
       if (userRole === 'admin') {
@@ -38,18 +41,20 @@ const LoginPage = () => {
       }
     } catch (err) {
       console.error("Login error details:", err);
+      // --- 3. Show error toast ---
       if (err.response) {
-        setError(err.response.data.msg || 'Login failed. Please check your credentials.');
+        toast.error(err.response.data.msg || 'Login failed. Please check your credentials.');
       } else if (err.request) {
-        setError('Cannot connect to server. Please make sure the backend is running.');
+        toast.error('Cannot connect to server. Please make sure the backend is running.');
       } else {
-        setError('An unexpected error occurred. Please try again.');
+        toast.error('An unexpected error occurred. Please try again.');
       }
     } finally {
       setIsLoading(false);
     }
   };
 
+  // The JSX is the same, but we can remove the {error && ...} line
   return (
     <div className="min-h-screen bg-slate-100 font-sans flex flex-col justify-center items-center p-4">
       <div className="w-full max-w-md">
@@ -76,9 +81,6 @@ const LoginPage = () => {
                 </Link>
               </div>
             </div>
-            
-            {error && <p className="text-sm text-center text-red-600">{error}</p>}
-
             <div>
               <button type="submit" disabled={isLoading} className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors disabled:bg-blue-300">
                 {isLoading ? 'Logging in...' : 'Login'}

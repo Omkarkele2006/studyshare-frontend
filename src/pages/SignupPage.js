@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast'; // <-- 1. Import toast
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -8,7 +9,7 @@ const SignupPage = () => {
     prn: '',
     password: '',
   });
-  const [message, setMessage] = useState('');
+  // We no longer need the 'message' state
   const navigate = useNavigate();
 
   const { email, prn, password } = formData;
@@ -19,24 +20,28 @@ const SignupPage = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    // A loading toast shows a spinner while the request is happening
+    const toastId = toast.loading('Creating your account...');
+
     try {
-      // --- THIS IS THE FIX ---
-      // Using the live backend URL directly
       const API_URL = 'https://studyshare-backend-xo81.onrender.com/api/auth/signup';
       const res = await axios.post(API_URL, formData);
       
-      setMessage(res.data.msg + ' Redirecting to login...');
+      // Update the toast to show success
+      toast.success(res.data.msg, { id: toastId });
+
       setTimeout(() => {
         navigate('/login');
       }, 2000);
     } catch (err) {
       const errorMsg = err.response ? err.response.data.msg : 'An error occurred. Please try again.';
-      setMessage(errorMsg);
+      // Update the toast to show an error
+      toast.error(errorMsg, { id: toastId });
       console.error(err.response ? err.response.data : err.message);
     }
   };
 
-  // The rest of your styled return() function is the same
+  // The JSX is the same, but we can remove the {message && ...} line
   return (
     <div className="min-h-screen bg-slate-100 font-sans flex flex-col justify-center items-center p-4">
       <div className="w-full max-w-md">
@@ -66,7 +71,6 @@ const SignupPage = () => {
               </button>
             </div>
           </form>
-          {message && <p className="mt-4 text-center text-sm text-gray-600">{message}</p>}
           <p className="mt-6 text-center text-sm text-gray-600">
             Already have an account?{' '}
             <Link to="/login" className="font-semibold text-blue-600 hover:text-blue-500">
