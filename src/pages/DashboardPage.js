@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import API from '../api/axios'; // Make sure we use our central API client
 
 // A simple SVG icon for the download button
 const DownloadIcon = () => (
@@ -19,7 +20,8 @@ const DashboardPage = () => {
       try {
         const token = localStorage.getItem('token');
         const config = { headers: { 'x-auth-token': token } };
-        const res = await axios.get('${process.env.REACT_APP_API_URL}/api/notes', config);
+        // Using our central API client
+        const res = await API.get('/api/notes', config);
         setNotes(res.data);
       } catch (err) {
         console.error('Error fetching notes:', err);
@@ -43,7 +45,8 @@ const DashboardPage = () => {
         headers: { 'x-auth-token': token },
         responseType: 'blob',
       };
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/notes/download/${noteId}`, config);
+      // Using our central API client
+      const res = await API.get(`/api/notes/download/${noteId}`, config);
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement('a');
       link.href = url;
@@ -58,10 +61,15 @@ const DashboardPage = () => {
     }
   };
 
-  const filteredNotes = notes.filter(note =>
-    note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    note.subject.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // --- THIS IS THE FIX ---
+  // We check if 'notes' is an array before trying to filter it.
+  // If it's not an array, we default to an empty array to prevent the crash.
+  const filteredNotes = Array.isArray(notes)
+    ? notes.filter(note =>
+        note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        note.subject.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : [];
 
   return (
     <div className="min-h-screen bg-slate-100 font-sans flex">
@@ -74,9 +82,6 @@ const DashboardPage = () => {
           <a href="/dashboard" className="block py-2.5 px-4 bg-blue-100 text-blue-600 font-semibold rounded-lg">
             Dashboard
           </a>
-          {/* Future links can be added here */}
-          {/* <a href="/profile" className="block py-2.5 px-4 text-gray-600 hover:bg-gray-100 rounded-lg">My Profile</a> */}
-          {/* <a href="/requests" className="block py-2.5 px-4 text-gray-600 hover:bg-gray-100 rounded-lg">Request a Note</a> */}
         </nav>
         <div className="absolute bottom-0 p-4 w-64">
            <button
@@ -92,7 +97,6 @@ const DashboardPage = () => {
       <main className="flex-1 p-8">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-semibold text-gray-800">Available Notes</h2>
-          {/* Search Bar */}
           <input
             type="text"
             placeholder="Search by title or subject..."
