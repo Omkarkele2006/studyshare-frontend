@@ -14,7 +14,7 @@ const MenuIcon = () => (
 const DashboardPage = () => {
   const [notes, setNotes] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State for mobile sidebar
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -69,19 +69,28 @@ const DashboardPage = () => {
     : [];
 
   return (
-    <div className="min-h-screen bg-slate-100 font-sans flex">
+    <div className="relative min-h-screen md:flex bg-slate-100 font-sans">
+      {/* --- Mobile Menu Button --- */}
+      <div className="md:hidden flex justify-between items-center p-4 bg-white shadow-md">
+        <h1 className="text-2xl font-bold text-blue-600">StudyShare</h1>
+        <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 text-gray-600">
+            <MenuIcon />
+        </button>
+      </div>
+
       {/* --- Sidebar --- */}
-      {/* On medium screens and up (md:), it's always visible. On smaller screens, its visibility is controlled by 'isSidebarOpen' state. */}
-      <aside className={`bg-white shadow-md fixed md:relative z-10 w-64 h-full transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
-        <div className="p-6">
-          <h1 className="text-3xl font-bold text-blue-600">StudyShare</h1>
+      <aside className={`bg-white shadow-md fixed inset-y-0 left-0 z-10 w-64 transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 flex flex-col justify-between`}>
+        <div>
+            <div className="p-6 hidden md:block">
+              <h1 className="text-3xl font-bold text-blue-600">StudyShare</h1>
+            </div>
+            <nav className="mt-6 p-2">
+              <a href="/dashboard" className="block py-2.5 px-4 bg-blue-100 text-blue-600 font-semibold rounded-lg">
+                Dashboard
+              </a>
+            </nav>
         </div>
-        <nav className="mt-6 p-2">
-          <a href="/dashboard" className="block py-2.5 px-4 bg-blue-100 text-blue-600 font-semibold rounded-lg">
-            Dashboard
-          </a>
-        </nav>
-        <div className="absolute bottom-0 p-4 w-64">
+        <div className="p-4">
            <button
             onClick={handleLogout}
             className="w-full text-left py-2.5 px-4 text-gray-600 hover:bg-red-100 hover:text-red-600 rounded-lg transition-colors"
@@ -94,14 +103,9 @@ const DashboardPage = () => {
       {/* --- Main Content --- */}
       <main className="flex-1 p-4 md:p-8">
         <div className="flex justify-between items-center mb-8">
-          {/* Hamburger Menu Button - only visible on small screens (md:hidden) */}
-          <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="md:hidden p-2 text-gray-600">
-            <MenuIcon />
-          </button>
           <h2 className="text-xl md:text-3xl font-semibold text-gray-800">Available Notes</h2>
         </div>
         
-        {/* Search Bar */}
         <div className="mb-8">
             <input
                 type="text"
@@ -111,7 +115,6 @@ const DashboardPage = () => {
             />
         </div>
 
-        {/* --- Notes Grid --- */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredNotes.length > 0 ? (
             filteredNotes.map((note) => (
