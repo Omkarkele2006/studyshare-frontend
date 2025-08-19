@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import API from '../api/axios'; // Make sure we use our central API client
+import API from '../api/axios';
 
-// A simple SVG icon for the download button
+// --- ICONS ---
 const DownloadIcon = () => (
-  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-  </svg>
+  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+);
+
+const MenuIcon = () => (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
 );
 
 const DashboardPage = () => {
   const [notes, setNotes] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State for mobile sidebar
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,7 +22,6 @@ const DashboardPage = () => {
       try {
         const token = localStorage.getItem('token');
         const config = { headers: { 'x-auth-token': token } };
-        // Using our central API client
         const res = await API.get('/api/notes', config);
         setNotes(res.data);
       } catch (err) {
@@ -44,7 +46,6 @@ const DashboardPage = () => {
         headers: { 'x-auth-token': token },
         responseType: 'blob',
       };
-      // Using our central API client
       const res = await API.get(`/api/notes/download/${noteId}`, config);
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement('a');
@@ -60,9 +61,6 @@ const DashboardPage = () => {
     }
   };
 
-  // --- THIS IS THE FIX ---
-  // We check if 'notes' is an array before trying to filter it.
-  // If it's not an array, we default to an empty array to prevent the crash.
   const filteredNotes = Array.isArray(notes)
     ? notes.filter(note =>
         note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -73,11 +71,12 @@ const DashboardPage = () => {
   return (
     <div className="min-h-screen bg-slate-100 font-sans flex">
       {/* --- Sidebar --- */}
-      <aside className="w-64 bg-white shadow-md">
+      {/* On medium screens and up (md:), it's always visible. On smaller screens, its visibility is controlled by 'isSidebarOpen' state. */}
+      <aside className={`bg-white shadow-md fixed md:relative z-10 w-64 h-full transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
         <div className="p-6">
           <h1 className="text-3xl font-bold text-blue-600">StudyShare</h1>
         </div>
-        <nav className="mt-6">
+        <nav className="mt-6 p-2">
           <a href="/dashboard" className="block py-2.5 px-4 bg-blue-100 text-blue-600 font-semibold rounded-lg">
             Dashboard
           </a>
@@ -93,15 +92,23 @@ const DashboardPage = () => {
       </aside>
 
       {/* --- Main Content --- */}
-      <main className="flex-1 p-8">
+      <main className="flex-1 p-4 md:p-8">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-semibold text-gray-800">Available Notes</h2>
-          <input
-            type="text"
-            placeholder="Search by title or subject..."
-            className="w-1/2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+          {/* Hamburger Menu Button - only visible on small screens (md:hidden) */}
+          <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="md:hidden p-2 text-gray-600">
+            <MenuIcon />
+          </button>
+          <h2 className="text-xl md:text-3xl font-semibold text-gray-800">Available Notes</h2>
+        </div>
+        
+        {/* Search Bar */}
+        <div className="mb-8">
+            <input
+                type="text"
+                placeholder="Search by title or subject..."
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(e) => setSearchTerm(e.target.value)}
+            />
         </div>
 
         {/* --- Notes Grid --- */}
