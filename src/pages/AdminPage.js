@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+// import axios from 'axios'; // We no longer need the default axios
+import API from '../api/axios'; // <-- 1. Import our new API client
 import { useNavigate } from 'react-router-dom';
 
 const AdminPage = () => {
@@ -52,7 +53,8 @@ const AdminPage = () => {
         },
       };
 
-      await axios.post('${process.env.REACT_APP_API_URL}/api/notes/upload', uploadData, config);
+      // --- 2. Use the simplified API call ---
+      await API.post('/api/notes/upload', uploadData, config);
       
       setMessage('File uploaded successfully!');
       setFormData({ title: '', subject: '', year: '' });
@@ -67,6 +69,7 @@ const AdminPage = () => {
     }
   };
 
+  // ... the rest of your styled return() function remains the same
   return (
     <div className="min-h-screen bg-slate-100 font-sans flex">
       {/* --- Admin Sidebar --- */}
@@ -79,7 +82,6 @@ const AdminPage = () => {
           <a href="/admin" className="block py-2.5 px-4 bg-purple-100 text-purple-600 font-semibold rounded-lg">
             Upload Notes
           </a>
-          {/* Future admin links can be added here */}
         </nav>
         <div className="absolute bottom-0 p-4 w-64">
            <button
