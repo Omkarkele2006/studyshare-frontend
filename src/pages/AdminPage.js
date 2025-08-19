@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-// import axios from 'axios'; // We no longer need the default axios
-import API from '../api/axios'; // <-- 1. Import our new API client
+import axios from 'axios'; // We will use the default axios for this test
 import { useNavigate } from 'react-router-dom';
 
 const AdminPage = () => {
@@ -53,8 +52,11 @@ const AdminPage = () => {
         },
       };
 
-      // --- 2. Use the simplified API call ---
-      await API.post('/api/notes/upload', uploadData, config);
+      // --- THIS IS THE HARDCODED FIX ---
+      // We are putting the full URL directly here to bypass any build issues.
+      const API_URL = 'https://studyshare-backend-xo81.onrender.com/api/notes/upload';
+      
+      await axios.post(API_URL, uploadData, config);
       
       setMessage('File uploaded successfully!');
       setFormData({ title: '', subject: '', year: '' });
