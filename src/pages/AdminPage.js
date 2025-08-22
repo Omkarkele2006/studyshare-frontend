@@ -15,7 +15,7 @@ const CloseIcon = () => (
 );
 
 
-// --- NEW: Download Stats Modal Component ---
+// --- Download Stats Modal Component ---
 const StatsModal = ({ note, downloads, onClose }) => {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-20">
@@ -50,12 +50,9 @@ const AdminPage = () => {
   const [file, setFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [notes, setNotes] = useState([]);
-  
-  // --- State for the modal ---
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedNote, setSelectedNote] = useState(null);
   const [downloadStats, setDownloadStats] = useState([]);
-  
   const navigate = useNavigate();
 
   useEffect(() => { fetchNotes(); }, []);
@@ -139,7 +136,6 @@ const AdminPage = () => {
     ), { duration: 6000 });
   };
 
-  // --- NEW: Handler for viewing stats ---
   const handleViewStats = async (note) => {
     setSelectedNote(note);
     setIsModalOpen(true);
@@ -150,7 +146,7 @@ const AdminPage = () => {
         setDownloadStats(res.data);
     } catch (error) {
         toast.error('Could not fetch download stats.');
-        setIsModalOpen(false); // Close modal on error
+        setIsModalOpen(false);
     }
   };
 
@@ -163,9 +159,23 @@ const AdminPage = () => {
     <div className="min-h-screen bg-slate-100 font-sans flex">
       {/* Sidebar */}
       <aside className="w-64 bg-white shadow-md flex-shrink-0">
-        <div className="p-6"><h1 className="text-3xl font-bold text-purple-600">StudyShare</h1><span className="text-sm font-semibold text-gray-500">Admin Panel</span></div>
-        <nav className="mt-6 p-2"><a href="/admin" className="block py-2.5 px-4 bg-purple-100 text-purple-600 font-semibold rounded-lg">Manage Notes</a></nav>
-        <div className="absolute bottom-0 p-4 w-64"><button onClick={handleLogout} className="w-full text-left py-2.5 px-4 text-gray-600 hover:bg-red-100 hover:text-red-600 rounded-lg transition-colors">Logout</button></div>
+        <div className="p-6">
+          <h1 className="text-3xl font-bold text-purple-600">StudyShare</h1>
+          <span className="text-sm font-semibold text-gray-500">Admin Panel</span>
+        </div>
+        <nav className="mt-6 p-2 space-y-2">
+          <a href="/admin" className="block py-2.5 px-4 bg-purple-100 text-purple-600 font-semibold rounded-lg">
+            Manage Notes
+          </a>
+          <a href="/admin/users" className="block py-2.5 px-4 text-gray-600 hover:bg-purple-50 rounded-lg">
+            Manage Users
+          </a>
+        </nav>
+        <div className="absolute bottom-0 p-4 w-64">
+           <button onClick={handleLogout} className="w-full text-left py-2.5 px-4 text-gray-600 hover:bg-red-100 hover:text-red-600 rounded-lg transition-colors">
+            Logout
+          </button>
+        </div>
       </aside>
 
       {/* Main Content */}
@@ -174,7 +184,6 @@ const AdminPage = () => {
         <div className="bg-white shadow-xl rounded-2xl p-8 max-w-2xl mx-auto mb-12">
           <h2 className="text-2xl font-semibold text-gray-800 mb-6">Upload New Note</h2>
           <form onSubmit={onUploadSubmit} className="space-y-6">
-            {/* ... form inputs ... */}
              <div><label htmlFor="title" className="block text-sm font-medium text-gray-600">Title</label><input id="title" type="text" name="title" value={formData.title} onChange={onChange} required className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500" /></div>
             <div><label htmlFor="subject" className="block text-sm font-medium text-gray-600">Subject</label><input id="subject" type="text" name="subject" value={formData.subject} onChange={onChange} required className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500" /></div>
             <div><label htmlFor="year" className="block text-sm font-medium text-gray-600">Year</label><input id="year" type="text" name="year" value={formData.year} onChange={onChange} required className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500" /></div>
@@ -203,7 +212,6 @@ const AdminPage = () => {
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{note.subject}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{note.year}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex items-center space-x-4">
-                                    {/* --- NEW STATS BUTTON --- */}
                                     <button onClick={() => handleViewStats(note)} className="text-blue-600 hover:text-blue-900 flex items-center">
                                         <StatsIcon />
                                         <span className="ml-1">Stats</span>
@@ -221,7 +229,6 @@ const AdminPage = () => {
         </div>
       </main>
 
-      {/* --- Render the modal if it's open --- */}
       {isModalOpen && <StatsModal note={selectedNote} downloads={downloadStats} onClose={() => setIsModalOpen(false)} />}
     </div>
   );

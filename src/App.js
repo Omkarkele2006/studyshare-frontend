@@ -7,10 +7,9 @@ import DashboardPage from './pages/DashboardPage';
 import AdminPage from './pages/AdminPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
-import OtpVerificationPage from './pages/OtpVerificationPage'; // <-- Import
+import OtpVerificationPage from './pages/OtpVerificationPage';
+import UserManagementPage from './pages/UserManagementPage'; // <-- 1. Import UserManagementPage
 import PrivateRoute from './components/PrivateRoute';
-
-// We no longer need the old VerificationPage, so we can remove it.
 
 function App() {
   return (
@@ -21,13 +20,15 @@ function App() {
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
-          <Route path="/verify-otp" element={<OtpVerificationPage />} /> {/* <-- Add OTP route */}
+          <Route path="/verify-otp" element={<OtpVerificationPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
 
+          {/* Admin routes are protected */}
           <Route element={<PrivateRoute />}>
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/admin" element={<AdminPage />} />
+            <Route path="/admin/users" element={<UserManagementPage />} /> {/* <-- 2. Add the new route */}
           </Route>
         </Routes>
       </div>
