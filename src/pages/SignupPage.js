@@ -25,7 +25,7 @@ const SignupPage = () => {
       const res = await API.post('/api/auth/signup', formData);
       toast.success(res.data.msg, { id: toastId });
 
-      // --- THIS IS THE CHANGE ---
+      // --- THIS IS THE CORRECTED LOGIC ---
       // Navigate to the OTP page and pass the email in the state
       navigate('/verify-otp', { state: { email: res.data.email } });
 
@@ -36,7 +36,6 @@ const SignupPage = () => {
     }
   };
 
-  // The JSX for the form remains the same
   return (
     <div className="min-h-screen bg-slate-100 font-sans flex flex-col justify-center items-center p-4">
       <div className="w-full max-w-md">
@@ -53,7 +52,7 @@ const SignupPage = () => {
               <input id="email" type="email" name="email" value={email} onChange={onChange} required className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
             </div>
             <div>
-              <label htmlFor="prn" className="block text-sm font-medium text-gray-600">PRN (Student ID)</label>
+              <label htmlFor="prn" className="block text-sm font-medium text-gray-600">PRN</label>
               <input id="prn" type="text" name="prn" value={prn} onChange={onChange} required className="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
             </div>
             <div>
