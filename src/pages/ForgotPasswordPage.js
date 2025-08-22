@@ -1,20 +1,22 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import API from '../api/axios';
+import toast from 'react-hot-toast'; // <-- 1. Import toast
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
+  // We no longer need the 'message' state
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    setMessage('');
+    const toastId = toast.loading('Sending reset link...');
+
     try {
       const res = await API.post('/api/auth/forgot-password', { email });
-      setMessage(res.data.msg);
+      toast.success(res.data.msg, { id: toastId }); // <-- 2. Show success toast
     } catch (err) {
       const errorMsg = err.response ? err.response.data.msg : 'An error occurred. Please try again.';
-      setMessage(errorMsg);
+      toast.error(errorMsg, { id: toastId }); // <-- 3. Show error toast
     }
   };
 
@@ -55,7 +57,7 @@ const ForgotPasswordPage = () => {
               </button>
             </div>
           </form>
-          {message && <p className="mt-4 text-center text-sm text-gray-600">{message}</p>}
+          {/* We can remove the old message paragraph */}
           <p className="mt-6 text-center text-sm text-gray-600">
             Remembered your password?{' '}
             <Link to="/login" className="font-semibold text-blue-600 hover:text-blue-500">

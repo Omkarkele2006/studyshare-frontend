@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../api/axios';
+import toast from 'react-hot-toast'; // <-- 1. Import toast
 
 // --- ICONS ---
 const DownloadIcon = () => (
@@ -40,6 +41,7 @@ const DashboardPage = () => {
   };
 
   const handleDownload = async (noteId, fileName) => {
+    const toastId = toast.loading('Preparing download...');
     try {
       const token = localStorage.getItem('token');
       const config = {
@@ -55,9 +57,10 @@ const DashboardPage = () => {
       link.click();
       link.parentNode.removeChild(link);
       window.URL.revokeObjectURL(url);
+      toast.success('Download started!', { id: toastId }); // <-- 2. Show success toast
     } catch (err) {
       console.error('Error downloading file:', err);
-      alert('Download failed. Please try again.');
+      toast.error('Download failed. Please try again.', { id: toastId }); // <-- 3. Show error toast
     }
   };
 

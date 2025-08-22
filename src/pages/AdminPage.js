@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import axios from 'axios'; // We will use the default axios for this test
+import React, {useState} from 'react';
+import API from '../api/axios';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast'; // <-- 1. Import toast
 
 const AdminPage = () => {
   const [formData, setFormData] = useState({
@@ -10,7 +11,7 @@ const AdminPage = () => {
   });
   const [file, setFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState('');
+  // We no longer need the 'message' state
   const navigate = useNavigate();
 
   const { title, subject, year } = formData;
@@ -31,11 +32,10 @@ const AdminPage = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     if (!file) {
-      setMessage('Please select a file to upload.');
-      return;
+      return toast.error('Please select a file to upload.'); // <-- Use toast
     }
     setIsLoading(true);
-    setMessage('');
+    const toastId = toast.loading('Uploading file...');
 
     const uploadData = new FormData();
     uploadData.append('title', title);
@@ -52,26 +52,23 @@ const AdminPage = () => {
         },
       };
 
-      // --- THIS IS THE HARDCODED FIX ---
-      // We are putting the full URL directly here to bypass any build issues.
-      const API_URL = 'https://studyshare-backend-xo81.onrender.com/api/notes/upload';
+      await API.post('/api/notes/upload', uploadData, config);
       
-      await axios.post(API_URL, uploadData, config);
+      toast.success('File uploaded successfully!', { id: toastId }); // <-- 2. Show success toast
       
-      setMessage('File uploaded successfully!');
       setFormData({ title: '', subject: '', year: '' });
       setFile(null);
       e.target.reset();
 
     } catch (err) {
       console.error(err.response ? err.response.data : err.message);
-      setMessage(err.response ? err.response.data.msg : 'Upload failed. Please try again.');
+      const errorMsg = err.response ? err.response.data.msg : 'Upload failed. Please try again.';
+      toast.error(errorMsg, { id: toastId }); // <-- 3. Show error toast
     } finally {
       setIsLoading(false);
     }
   };
 
-  // ... the rest of your styled return() function remains the same
   return (
     <div className="min-h-screen bg-slate-100 font-sans flex">
       {/* --- Admin Sidebar --- */}
@@ -80,7 +77,7 @@ const AdminPage = () => {
           <h1 className="text-3xl font-bold text-purple-600">StudyShare</h1>
           <span className="text-sm font-semibold text-gray-500">Admin Panel</span>
         </div>
-        <nav className="mt-6">
+        <nav className="mt-6 p-2">
           <a href="/admin" className="block py-2.5 px-4 bg-purple-100 text-purple-600 font-semibold rounded-lg">
             Upload Notes
           </a>
@@ -118,7 +115,7 @@ const AdminPage = () => {
               <input id="noteFile" type="file" name="noteFile" onChange={onFileChange} required className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-100 file:text-purple-700 hover:file:bg-purple-200" />
             </div>
             
-            {message && <p className="text-sm text-center text-gray-600">{message}</p>}
+            {/* We can remove the old message paragraph */}
 
             <div>
               <button

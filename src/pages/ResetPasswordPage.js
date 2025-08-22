@@ -1,29 +1,33 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import API from '../api/axios';
+import toast from 'react-hot-toast'; // <-- 1. Import toast
 
 const ResetPasswordPage = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [message, setMessage] = useState('');
-  const { token } = useParams(); // Gets the reset token from the URL
+  // We no longer need the 'message' state
+  const { token } = useParams();
   const navigate = useNavigate();
 
   const onSubmit = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      return setMessage('Passwords do not match.');
+      return toast.error('Passwords do not match.'); // <-- Use toast for this check
     }
-    setMessage('');
+    
+    const toastId = toast.loading('Resetting your password...');
+
     try {
       const res = await API.post(`/api/auth/reset-password/${token}`, { password });
-      setMessage(res.data.msg + ' Redirecting to login...');
+      toast.success(res.data.msg + ' Redirecting...', { id: toastId }); // <-- 2. Show success toast
+
       setTimeout(() => {
         navigate('/login');
       }, 2000);
     } catch (err) {
       const errorMsg = err.response ? err.response.data.msg : 'An error occurred. Please try again.';
-      setMessage(errorMsg);
+      toast.error(errorMsg, { id: toastId }); // <-- 3. Show error toast
     }
   };
 
@@ -75,7 +79,7 @@ const ResetPasswordPage = () => {
               </button>
             </div>
           </form>
-          {message && <p className="mt-4 text-center text-sm text-gray-600">{message}</p>}
+          {/* We can remove the old message paragraph */}
         </div>
       </div>
     </div>

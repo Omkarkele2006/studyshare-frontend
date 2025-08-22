@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast'; // <-- 1. Import toast
+import API from '../api/axios'; // Use our central API client
+import toast from 'react-hot-toast';
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -9,7 +9,6 @@ const SignupPage = () => {
     prn: '',
     password: '',
   });
-  // We no longer need the 'message' state
   const navigate = useNavigate();
 
   const { email, prn, password } = formData;
@@ -20,28 +19,24 @@ const SignupPage = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    // A loading toast shows a spinner while the request is happening
     const toastId = toast.loading('Creating your account...');
 
     try {
-      const API_URL = 'https://studyshare-backend-xo81.onrender.com/api/auth/signup';
-      const res = await axios.post(API_URL, formData);
-      
-      // Update the toast to show success
+      const res = await API.post('/api/auth/signup', formData);
       toast.success(res.data.msg, { id: toastId });
 
-      setTimeout(() => {
-        navigate('/login');
-      }, 2000);
+      // --- THIS IS THE CHANGE ---
+      // Navigate to the OTP page and pass the email in the state
+      navigate('/verify-otp', { state: { email: res.data.email } });
+
     } catch (err) {
-      const errorMsg = err.response ? err.response.data.msg : 'An error occurred. Please try again.';
-      // Update the toast to show an error
+      const errorMsg = err.response ? err.response.data.msg : 'An error occurred.';
       toast.error(errorMsg, { id: toastId });
       console.error(err.response ? err.response.data : err.message);
     }
   };
 
-  // The JSX is the same, but we can remove the {message && ...} line
+  // The JSX for the form remains the same
   return (
     <div className="min-h-screen bg-slate-100 font-sans flex flex-col justify-center items-center p-4">
       <div className="w-full max-w-md">
