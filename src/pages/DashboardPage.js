@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import API from '../api/axios';
-import toast from 'react-hot-toast'; // <-- 1. Import toast
+import toast from 'react-hot-toast';
 
 // --- ICONS ---
 const DownloadIcon = () => (
-  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+<svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
 );
 
 const MenuIcon = () => (
@@ -57,14 +57,14 @@ const DashboardPage = () => {
       link.click();
       link.parentNode.removeChild(link);
       window.URL.revokeObjectURL(url);
-      toast.success('Download started!', { id: toastId }); // <-- 2. Show success toast
+      toast.success('Download started!', { id: toastId });
     } catch (err) {
       console.error('Error downloading file:', err);
-      toast.error('Download failed. Please try again.', { id: toastId }); // <-- 3. Show error toast
+      toast.error('Download failed. Please try again.', { id: toastId });
     }
   };
 
-  const filteredNotes = Array.isArray(notes)
+    const filteredNotes = Array.isArray(notes)
     ? notes.filter(note =>
         note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         note.subject.toLowerCase().includes(searchTerm.toLowerCase())
@@ -87,9 +87,12 @@ const DashboardPage = () => {
             <div className="p-6 hidden md:block">
               <h1 className="text-3xl font-bold text-blue-600">StudyShare</h1>
             </div>
-            <nav className="mt-6 p-2">
+            <nav className="mt-6 p-2 space-y-2">
               <a href="/dashboard" className="block py-2.5 px-4 bg-blue-100 text-blue-600 font-semibold rounded-lg">
                 Dashboard
+              </a>
+              <a href="/request-note" className="block py-2.5 px-4 text-gray-600 hover:bg-blue-50 rounded-lg">
+                Request a Note
               </a>
             </nav>
         </div>

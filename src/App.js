@@ -8,7 +8,9 @@ import AdminPage from './pages/AdminPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import OtpVerificationPage from './pages/OtpVerificationPage';
-import UserManagementPage from './pages/UserManagementPage'; // <-- 1. Import UserManagementPage
+import UserManagementPage from './pages/UserManagementPage';
+import RequestNotePage from './pages/RequestNotePage';
+import ViewRequestsPage from './pages/ViewRequestsPage'; // <-- 1. Import
 import PrivateRoute from './components/PrivateRoute';
 
 function App() {
@@ -17,6 +19,7 @@ function App() {
       <div className="App">
         <Toaster position="top-center" reverseOrder={false} />
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
@@ -24,11 +27,16 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
 
-          {/* Admin routes are protected */}
+          {/* Protected Routes */}
           <Route element={<PrivateRoute />}>
+            {/* Student Routes */}
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/request-note" element={<RequestNotePage />} />
+            
+            {/* Admin Routes */}
             <Route path="/admin" element={<AdminPage />} />
-            <Route path="/admin/users" element={<UserManagementPage />} /> {/* <-- 2. Add the new route */}
+            <Route path="/admin/users" element={<UserManagementPage />} />
+            <Route path="/admin/requests" element={<ViewRequestsPage />} /> {/* <-- 2. Add route */}
           </Route>
         </Routes>
       </div>
